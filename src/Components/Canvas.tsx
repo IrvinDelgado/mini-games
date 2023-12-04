@@ -1,4 +1,4 @@
-import useCanvas, { CanvasDraw } from "./hooks/useCanvas";
+import useCanvas, { CanvasDraw } from "../hooks/useCanvas";
 
 interface ICanvas extends React.CanvasHTMLAttributes<HTMLCanvasElement> {
   draw: CanvasDraw;
