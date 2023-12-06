@@ -1,1 +1,1 @@
-export const BLOCK_SPACE = 10;
+export const BLOCK_WIDTH = 10;

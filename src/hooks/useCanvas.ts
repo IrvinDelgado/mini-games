@@ -7,11 +7,10 @@ export type CanvasDraw = (
 
 const useCanvas = (draw: CanvasDraw) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (!context) return;
+    if (!context || !canvas) return;
     let frameCount = 0;
     let animationFrameId: number;
 

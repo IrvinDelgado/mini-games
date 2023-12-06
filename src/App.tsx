@@ -1,4 +1,4 @@
-import Snake from "./games/Snake";
+import Snake from "./games/Snake/Snake";
 
 function App() {
   return (

@@ -1,23 +1,26 @@
-import useCanvas, { CanvasDraw } from "../hooks/useCanvas";
+import { forwardRef } from "react";
+import { CanvasDraw } from "../hooks/useCanvas";
 
 interface ICanvas extends React.CanvasHTMLAttributes<HTMLCanvasElement> {
   draw: CanvasDraw;
+  height: string;
+  width: string;
 }
 
-const Canvas = (props: ICanvas) => {
-  const { draw, ...rest } = props;
+const Canvas = forwardRef(
+  (props: ICanvas, ref: React.ForwardedRef<HTMLCanvasElement>) => {
+    const { draw, height, width, ...rest } = props;
 
-  const canvasRef = useCanvas(draw);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      {...rest}
-      id="canvas"
-      width="800"
-      height="600"
-    ></canvas>
-  );
-};
+    return (
+      <canvas
+        ref={ref}
+        {...rest}
+        id="canvas"
+        width={width}
+        height={height}
+      ></canvas>
+    );
+  }
+);
 
 export default Canvas;
