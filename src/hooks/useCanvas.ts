@@ -1,25 +1,32 @@
 import { useRef, useEffect } from "react";
 
-export type CanvasDraw = (
+type seconds = number;
+
+export type CanvasDrawParams = (
   ctx: CanvasRenderingContext2D,
-  frameCount: number
+  frameCount: number,
+  passedTime: seconds
 ) => void;
 
-const useCanvas = (draw: CanvasDraw) => {
+const useCanvas = (draw: CanvasDrawParams) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!context || !canvas) return;
     let frameCount = 0;
     let animationFrameId: number;
+    let timePassedSeconds = 0;
 
-    const render = () => {
+    const render = (passedTime: number) => {
+      const timePassedSeconds = passedTime * 0.001;
       frameCount++;
-      draw(context, frameCount);
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      draw(context, frameCount, timePassedSeconds);
       animationFrameId = window.requestAnimationFrame(render);
     };
-    render();
+    render(timePassedSeconds);
 
     return () => {
       window.cancelAnimationFrame(animationFrameId);

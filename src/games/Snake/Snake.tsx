@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import Canvas from "../../components/Canvas";
 import styles from "./Snake.module.css";
 import { SnakeController } from "./Snake.controller";
-import useCanvas from "../../hooks/useCanvas";
+import useCanvas, { CanvasDrawParams } from "../../hooks/useCanvas";
+import { KEYBOARD } from "../../common/types";
 
 const snakeController = new SnakeController();
 const Snake = () => {
-  const draw = (ctx: CanvasRenderingContext2D, frameCount: number) =>
-    snakeController.drawGame(ctx, frameCount);
+  const draw: CanvasDrawParams = (ctx, frameCount, timePassed) =>
+    snakeController.drawGame(ctx, frameCount, timePassed);
   const canvasRef = useCanvas(draw);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ const Snake = () => {
       if (!ctx) {
         return;
       }
-      snakeController.moveOnUserInput(e.key, ctx);
+      snakeController.moveOnUserInput(e.key as KEYBOARD);
     };
     document.addEventListener("keydown", handleUserInput);
     return () => document.removeEventListener("keydown", handleUserInput);

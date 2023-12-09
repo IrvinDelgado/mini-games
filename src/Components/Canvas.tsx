@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
-import { CanvasDraw } from "../hooks/useCanvas";
+import { CanvasDrawParams } from "../hooks/useCanvas";
 
 interface ICanvas extends React.CanvasHTMLAttributes<HTMLCanvasElement> {
-  draw: CanvasDraw;
+  draw: CanvasDrawParams;
   height: string;
   width: string;
 }
