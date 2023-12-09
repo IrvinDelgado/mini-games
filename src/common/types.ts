@@ -15,4 +15,5 @@ export enum KEYBOARD {
   RIGHT = "ArrowRight",
   DOWN = "ArrowDown",
   LEFT = "ArrowLeft",
+  SPACE = " ",
 }

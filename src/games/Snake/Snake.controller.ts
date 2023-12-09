@@ -1,5 +1,6 @@
 import { DIRECTION, KEYBOARD, Position } from "../../common/types";
 const BLOCK_WIDTH = 50;
+const VELOCITY = 10;
 
 export class SnakeController {
   snakeHead: Position = { x: BLOCK_WIDTH, y: BLOCK_WIDTH };
@@ -8,6 +9,16 @@ export class SnakeController {
   snakeDirection = DIRECTION.RIGHT;
   newSnakeDirection = DIRECTION.RIGHT;
   needNewTarget = true;
+  isGameOver = false;
+
+  resetGame() {
+    this.snakeHead = { x: BLOCK_WIDTH, y: BLOCK_WIDTH };
+    this.snakeTail = [];
+    this.snakeDirection = DIRECTION.RIGHT;
+    this.newSnakeDirection = DIRECTION.RIGHT;
+    this.needNewTarget = true;
+    this.isGameOver = false;
+  }
 
   generateNewTargetPos(ctx: CanvasRenderingContext2D) {
     // Generate Block Coordinates
@@ -66,6 +77,12 @@ export class SnakeController {
   }
 
   drawGame(ctx: CanvasRenderingContext2D) {
+    if (this.isGameOver) {
+      ctx.font = "48px serif";
+      ctx.fillText("Game Over", ctx.canvas.width / 4, 50);
+      ctx.font = "32px serif";
+      ctx.fillText("Press 'Space' to Try Again", ctx.canvas.width / 4, 100);
+    }
     const isSwitchable =
       this.snakeDirection !== this.newSnakeDirection &&
       this.snakeHead.x % BLOCK_WIDTH === 0 &&
@@ -79,7 +96,7 @@ export class SnakeController {
       this.generateNewTargetPos(ctx);
       this.needNewTarget = false;
     }
-    this.drawGrid(ctx);
+    // this.drawGrid(ctx);
     this.drawSnake(ctx);
     this.drawSnakeTarget(ctx);
     const withinBounds =
@@ -87,38 +104,50 @@ export class SnakeController {
       this.snakeHead.y >= BLOCK_WIDTH &&
       this.snakeHead.x <= ctx.canvas.width * 2 &&
       this.snakeHead.y <= ctx.canvas.height * 2;
+    // Check if snake reached targetPosition
+    const reachedTarget =
+      this.snakeHead.x === this.snakeTarget.x &&
+      this.snakeHead.y === this.snakeTarget.y;
+    if (reachedTarget) {
+      this.addToSnakeTail();
+      this.addToSnakeTail();
+      this.addToSnakeTail();
+      this.needNewTarget = true;
+    }
     if (withinBounds) {
       this.moveSnake();
+    } else {
+      this.isGameOver = true;
     }
   }
 
-  addToSnakeTail(direction: string) {
+  addToSnakeTail() {
     const snakeTailEnd: Position =
       this.snakeTail.length > 0
         ? this.snakeTail[this.snakeTail.length - 1]
         : this.snakeHead;
-    switch (direction) {
-      case "ArrowUp":
+    switch (this.snakeDirection) {
+      case DIRECTION.UP:
         this.snakeTail.push({
           x: snakeTailEnd.x,
-          y: snakeTailEnd.y + BLOCK_WIDTH,
+          y: snakeTailEnd.y + VELOCITY,
         });
         break;
-      case "ArrowRight":
+      case DIRECTION.RIGHT:
         this.snakeTail.push({
-          x: snakeTailEnd.x - BLOCK_WIDTH,
+          x: snakeTailEnd.x - VELOCITY,
           y: snakeTailEnd.y,
         });
         break;
-      case "ArrowDown":
+      case DIRECTION.DOWN:
         this.snakeTail.push({
           x: snakeTailEnd.x,
-          y: snakeTailEnd.y - BLOCK_WIDTH,
+          y: snakeTailEnd.y - VELOCITY,
         });
         break;
-      case "ArrowLeft":
+      case DIRECTION.LEFT:
         this.snakeTail.push({
-          x: snakeTailEnd.x + BLOCK_WIDTH,
+          x: snakeTailEnd.x + VELOCITY,
           y: snakeTailEnd.y,
         });
         break;
@@ -126,7 +155,6 @@ export class SnakeController {
   }
 
   moveSnake() {
-    const VELOCITY = 10;
     // Move Snake Head
     switch (this.snakeDirection) {
       case DIRECTION.UP:
@@ -143,7 +171,7 @@ export class SnakeController {
         break;
     }
 
-    // Move Snake Tail
+    // Update Snake Tail
     const snakeTailHistory = [...this.snakeTail];
     this.snakeTail = this.snakeTail.map((_, idx) => {
       if (idx === 0) {
@@ -176,6 +204,9 @@ export class SnakeController {
           this.snakeDirection === DIRECTION.RIGHT
             ? DIRECTION.RIGHT
             : DIRECTION.LEFT;
+        break;
+      case KEYBOARD.SPACE:
+        this.resetGame();
         break;
     }
   }
